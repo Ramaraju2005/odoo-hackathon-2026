@@ -14,21 +14,17 @@ class DriverService {
     }
 
     return prisma.driver.create({
-      data,
+      data: {
+        name: data.name,
+        licenseNo: data.licenseNo,
+        licenseCategory: data.licenseCategory,
+        licenseExpiryDate: new Date(data.licenseExpiryDate),
+        contactNumber: data.contactNumber,
+        safetyScore: Number(data.safetyScore),
+        status: data.status || "AVAILABLE",
+      },
     });
-    
   }
-  async create(data) {
-  console.log("Service Data:", data);
-
-  return prisma.driver.create({
-    data: {
-      ...data,
-      licenseExpiryDate: new Date(data.licenseExpiryDate),
-      safetyScore: Number(data.safetyScore),
-    },
-  });
-}
 
   async getAll(filters = {}) {
     const where = {};
@@ -40,7 +36,12 @@ class DriverService {
     return prisma.driver.findMany({
       where,
       include: {
-        trips: { take: 5, orderBy: { createdAt: "desc" } },
+        trips: {
+          take: 5,
+          orderBy: {
+            createdAt: "desc",
+          },
+        },
       },
     });
   }
@@ -49,7 +50,11 @@ class DriverService {
     const driver = await prisma.driver.findUnique({
       where: { id },
       include: {
-        trips: { orderBy: { createdAt: "desc" } },
+        trips: {
+          orderBy: {
+            createdAt: "desc",
+          },
+        },
       },
     });
 
@@ -71,16 +76,41 @@ class DriverService {
 
     if (data.licenseNo && data.licenseNo !== driver.licenseNo) {
       const existing = await prisma.driver.findUnique({
-        where: { licenseNo: data.licenseNo },
+        where: {
+          licenseNo: data.licenseNo,
+        },
       });
+
       if (existing) {
         throw new AppError("License number already exists", 400);
       }
     }
 
+    const updateData = {};
+
+    if (data.name !== undefined) updateData.name = data.name;
+    if (data.licenseNo !== undefined) updateData.licenseNo = data.licenseNo;
+    if (data.licenseCategory !== undefined)
+      updateData.licenseCategory = data.licenseCategory;
+
+    if (data.licenseExpiryDate !== undefined) {
+      updateData.licenseExpiryDate = new Date(data.licenseExpiryDate);
+    }
+
+    if (data.contactNumber !== undefined)
+      updateData.contactNumber = data.contactNumber;
+
+    if (data.safetyScore !== undefined) {
+      updateData.safetyScore = Number(data.safetyScore);
+    }
+
+    if (data.status !== undefined) {
+      updateData.status = data.status;
+    }
+
     return prisma.driver.update({
       where: { id },
-      data,
+      data: updateData,
     });
   }
 
@@ -100,12 +130,13 @@ class DriverService {
 
   async getAvailableForDispatch() {
     const now = new Date();
+
     return prisma.driver.findMany({
       where: {
-        AND: [
-          { status: "AVAILABLE" },
-          { licenseExpiryDate: { gt: now } },
-        ],
+        status: "AVAILABLE",
+        licenseExpiryDate: {
+          gt: now,
+        },
       },
     });
   }
@@ -119,12 +150,15 @@ class DriverService {
 
   async checkLicenseValidity(id) {
     const driver = await this.getById(id);
+
     const now = new Date();
     const isValid = driver.licenseExpiryDate > now;
-    const daysUntilExpiry = Math.ceil((driver.licenseExpiryDate - now) / (1000 * 60 * 60 * 24));
+    const daysUntilExpiry = Math.ceil(
+      (driver.licenseExpiryDate - now) / (1000 * 60 * 60 * 24)
+    );
 
     return {
-      driverId: id,
+      driverId: driver.id,
       licenseNo: driver.licenseNo,
       licenseExpiryDate: driver.licenseExpiryDate,
       isValid,
@@ -134,24 +168,27 @@ class DriverService {
   }
 
   async getExpiredLicenses() {
-    const now = new Date();
     return prisma.driver.findMany({
       where: {
-        licenseExpiryDate: { lte: now },
+        licenseExpiryDate: {
+          lte: new Date(),
+        },
       },
     });
   }
 
   async getExpiringLicenses(daysThreshold = 30) {
     const now = new Date();
-    const thresholdDate = new Date(now.getTime() + daysThreshold * 24 * 60 * 60 * 1000);
+    const thresholdDate = new Date(
+      now.getTime() + daysThreshold * 24 * 60 * 60 * 1000
+    );
 
     return prisma.driver.findMany({
       where: {
-        AND: [
-          { licenseExpiryDate: { gt: now } },
-          { licenseExpiryDate: { lte: thresholdDate } },
-        ],
+        licenseExpiryDate: {
+          gt: now,
+          lte: thresholdDate,
+        },
       },
     });
   }
