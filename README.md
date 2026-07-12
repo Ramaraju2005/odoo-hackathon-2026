@@ -341,30 +341,6 @@ npm run dev
 
 ---
 
-# 👨‍💻 Developed For
-
-**Odoo Hackathon 2026**
-
-**Problem Statement:**
-Smart Transport Operations Platform
-
----
-
-# 📜 License
-
-This project was developed for educational and hackathon purposes.
-
----
-
-<p align="center">
-
-⭐ If you like this project, don't forget to star the repository!
-
-Made with ❤️ using React, Node.js & PostgreSQL.
-
-</p>
----
-
 # 🔐 Demo Credentials
 
 TransitOps comes preloaded with demo users for testing the Role-Based Access Control (RBAC) system.
