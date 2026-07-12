@@ -4,7 +4,7 @@ import { API_ENDPOINTS } from "../constants/api";
 import { useAuth } from "../context/AuthContext";
 
 export const VehiclesPage = () => {
-  const { token } = useAuth();
+  const { token, user } = useAuth();
   const [vehicles, setVehicles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -17,6 +17,9 @@ export const VehiclesPage = () => {
   const [filterStatus, setFilterStatus] = useState("All");
   const [sortBy, setSortBy] = useState("registrationNo");
   const [sortDir, setSortDir] = useState("asc");
+
+  // View-Only logic based on RBAC rules
+  const isReadOnly = user?.role === "DISPATCHER" || user?.role === "FINANCIAL_ANALYST";
 
   // Document Manager simulation state
   const [docVehicleNo, setDocVehicleNo] = useState(null);
@@ -57,6 +60,7 @@ export const VehiclesPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isReadOnly) return;
     try {
       if (editingId) {
         await api.put(API_ENDPOINTS.VEHICLES_UPDATE(editingId), formData, token);
@@ -81,6 +85,7 @@ export const VehiclesPage = () => {
   };
 
   const handleEdit = (vehicle) => {
+    if (isReadOnly) return;
     setFormData({
       registrationNo: vehicle.registrationNo,
       name: vehicle.name,
@@ -95,6 +100,7 @@ export const VehiclesPage = () => {
   };
 
   const handleDelete = async (id) => {
+    if (isReadOnly) return;
     if (confirm("Are you sure you want to delete this vehicle?")) {
       try {
         await api.delete(API_ENDPOINTS.VEHICLES_DELETE(id), token);
@@ -203,24 +209,26 @@ export const VehiclesPage = () => {
           <h1 className="text-2xl font-black text-gray-900 tracking-tight">Vehicle Registry</h1>
           <p className="text-xs text-gray-400 font-semibold mt-1">Manage and track your operational fleet.</p>
         </div>
-        <button
-          onClick={() => {
-            setShowForm(true);
-            setEditingId(null);
-            setFormData({
-              registrationNo: "",
-              name: "",
-              type: "Truck",
-              maxLoadCapacity: "",
-              odometer: "0",
-              acquisitionCost: "",
-              status: "AVAILABLE",
-            });
-          }}
-          className="bg-[#0F6B5C] hover:bg-[#0c594c] text-white px-5 py-2.5 rounded-xl text-xs font-bold transition shadow-xs"
-        >
-          + Add Vehicle
-        </button>
+        {!isReadOnly && (
+          <button
+            onClick={() => {
+              setShowForm(true);
+              setEditingId(null);
+              setFormData({
+                registrationNo: "",
+                name: "",
+                type: "Truck",
+                maxLoadCapacity: "",
+                odometer: "0",
+                acquisitionCost: "",
+                status: "AVAILABLE",
+              });
+            }}
+            className="bg-[#0F6B5C] hover:bg-[#0c594c] text-white px-5 py-2.5 rounded-xl text-xs font-bold transition shadow-xs"
+          >
+            + Add Vehicle
+          </button>
+        )}
       </div>
 
       {error && (
@@ -273,7 +281,7 @@ export const VehiclesPage = () => {
       </section>
 
       {/* Add / Edit Form Modal Dialog */}
-      {showForm && (
+      {showForm && !isReadOnly && (
         <div className="fixed inset-0 bg-black/45 backdrop-blur-xs flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-2xl shadow-xl border border-gray-100 max-w-lg w-full p-6 space-y-6">
             <div className="flex justify-between items-center border-b border-gray-100 pb-4">
@@ -460,27 +468,31 @@ export const VehiclesPage = () => {
                         </span>
                       </td>
                       <td className="px-6 py-4 text-[10px] space-x-2">
-                        <button
-                          onClick={() => handleEdit(vehicle)}
-                          className="text-[#0F6B5C] bg-[#0F6B5C]/5 border border-[#0F6B5C]/15 hover:bg-[#0F6B5C]/10 px-2 py-1 rounded-lg font-bold transition-all"
-                        >
-                          Modify
-                        </button>
+                        {!isReadOnly && (
+                          <button
+                            onClick={() => handleEdit(vehicle)}
+                            className="text-[#0F6B5C] bg-[#0F6B5C]/5 border border-[#0F6B5C]/15 hover:bg-[#0F6B5C]/10 px-2.5 py-1 rounded-lg font-bold transition-all"
+                          >
+                            Modify
+                          </button>
+                        )}
                         <button
                           onClick={() => {
                             setDocVehicleNo(vehicle.registrationNo);
                             setUploadMsg("");
                           }}
-                          className="text-[#4C8DFF] bg-[#4C8DFF]/5 border border-[#4C8DFF]/15 hover:bg-[#4C8DFF]/10 px-2 py-1 rounded-lg font-bold transition-all"
+                          className="text-[#4C8DFF] bg-[#4C8DFF]/5 border border-[#4C8DFF]/15 hover:bg-[#4C8DFF]/10 px-2.5 py-1 rounded-lg font-bold transition-all"
                         >
                           Docs
                         </button>
-                        <button
-                          onClick={() => handleDelete(vehicle.id)}
-                          className="text-[#E24B4A] bg-[#E24B4A]/5 border border-[#E24B4A]/15 hover:bg-[#E24B4A]/10 px-2.5 py-1 rounded-lg font-bold transition-all"
-                        >
-                          Remove
-                        </button>
+                        {!isReadOnly && (
+                          <button
+                            onClick={() => handleDelete(vehicle.id)}
+                            className="text-[#E24B4A] bg-[#E24B4A]/5 border border-[#E24B4A]/15 hover:bg-[#E24B4A]/10 px-2.5 py-1 rounded-lg font-bold transition-all"
+                          >
+                            Remove
+                          </button>
+                        )}
                       </td>
                     </tr>
                   );
@@ -515,7 +527,7 @@ export const VehiclesPage = () => {
               </div>
               <button
                 onClick={() => setDocVehicleNo(null)}
-                className="text-gray-400 hover:text-gray-600 text-lg font-bold"
+                className="text-gray-400 hover:text-gray-656 text-lg font-bold"
               >
                 ✕
               </button>
@@ -525,7 +537,7 @@ export const VehiclesPage = () => {
             <div className="space-y-3">
               <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest block">Active Vehicle Permits</span>
               {docList.map((doc, idx) => (
-                <div key={idx} className="bg-gray-50 border border-gray-100 rounded-xl p-3 flex justify-between items-center font-bold">
+                <div key={idx} className="bg-gray-55 border border-gray-100 rounded-xl p-3 flex justify-between items-center font-bold">
                   <div className="space-y-0.5">
                     <span className="text-gray-800 block text-xs">{doc.name}</span>
                     <span className="text-[9px] text-gray-400 font-semibold">Expires: {doc.expiry}</span>
@@ -538,36 +550,42 @@ export const VehiclesPage = () => {
             </div>
 
             {/* Simulated upload form */}
-            <form onSubmit={handleSimulatedUpload} className="pt-4 border-t border-gray-100 space-y-4">
-              <span className="text-[9px] font-black text-[#0F6B5C] uppercase tracking-widest block">Register Updated Permit</span>
-              
-              <div className="flex gap-2">
-                <select
-                  value={newDocType}
-                  onChange={(e) => setNewDocType(e.target.value)}
-                  className="flex-1 bg-[#F4F6F5] border border-transparent rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:bg-white"
-                >
-                  <option value="Fitness Certificate">Fitness Certificate</option>
-                  <option value="Pollution Under Control (PUC)">Pollution Under Control (PUC)</option>
-                  <option value="Fleet Insurance Policy">Fleet Insurance Policy</option>
-                  <option value="Road Permit Document">Road Permit Document</option>
-                </select>
+            {!isReadOnly ? (
+              <form onSubmit={handleSimulatedUpload} className="pt-4 border-t border-gray-100 space-y-4">
+                <span className="text-[9px] font-black text-[#0F6B5C] uppercase tracking-widest block">Register Updated Permit</span>
                 
-                <button
-                  type="submit"
-                  disabled={uploading}
-                  className="bg-[#0F6B5C] hover:bg-[#0c594c] text-white px-4 py-2 rounded-xl font-bold transition shadow-xs text-xs whitespace-nowrap"
-                >
-                  {uploading ? "Uploading..." : "Upload"}
-                </button>
-              </div>
-
-              {uploadMsg && (
-                <div className={`text-[10px] font-bold ${uploadMsg.startsWith("✓") ? "text-[#2E9C7C]" : "text-gray-500 animate-pulse"}`}>
-                  {uploadMsg}
+                <div className="flex gap-2">
+                  <select
+                    value={newDocType}
+                    onChange={(e) => setNewDocType(e.target.value)}
+                    className="flex-1 bg-[#F4F6F5] border border-transparent rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:bg-white"
+                  >
+                    <option value="Fitness Certificate">Fitness Certificate</option>
+                    <option value="Pollution Under Control (PUC)">Pollution Under Control (PUC)</option>
+                    <option value="Fleet Insurance Policy">Fleet Insurance Policy</option>
+                    <option value="Road Permit Document">Road Permit Document</option>
+                  </select>
+                  
+                  <button
+                    type="submit"
+                    disabled={uploading}
+                    className="bg-[#0F6B5C] hover:bg-[#0c594c] text-white px-4 py-2 rounded-xl font-bold transition shadow-xs text-xs whitespace-nowrap"
+                  >
+                    {uploading ? "Uploading..." : "Upload"}
+                  </button>
                 </div>
-              )}
-            </form>
+
+                {uploadMsg && (
+                  <div className={`text-[10px] font-bold ${uploadMsg.startsWith("✓") ? "text-[#2E9C7C]" : "text-gray-500 animate-pulse"}`}>
+                    {uploadMsg}
+                  </div>
+                )}
+              </form>
+            ) : (
+              <div className="pt-4 border-t border-gray-100 text-[10px] text-gray-400 font-medium">
+                Note: Document uploads are restricted for your active role level.
+              </div>
+            )}
 
             <div className="bg-amber-50/50 border border-amber-250/30 rounded-xl p-3 text-[10px] text-amber-700 font-semibold leading-relaxed">
               Compliance Tip: Digital storage of active road permits is mandated by transportation guidelines.

@@ -1,12 +1,34 @@
 import React from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
+// Access privilege matrix for roles
+const ROLE_ACCESS = {
+  ADMIN: ["/dashboard", "/vehicles", "/drivers", "/trips", "/maintenance", "/fuel", "/reports", "/settings"],
+  FLEET_MANAGER: ["/dashboard", "/vehicles", "/drivers", "/maintenance", "/reports", "/settings"],
+  DISPATCHER: ["/dashboard", "/vehicles", "/trips", "/settings"],
+  SAFETY_OFFICER: ["/dashboard", "/drivers", "/trips", "/settings"],
+  FINANCIAL_ANALYST: ["/dashboard", "/vehicles", "/fuel", "/reports", "/settings"],
+};
+
 export const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
+  const location = useLocation();
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
+  }
+
+  // Get active user role (defaulting to DISPATCHER if none specified)
+  const role = user?.role || "DISPATCHER";
+  const allowedPaths = ROLE_ACCESS[role] || ROLE_ACCESS.DISPATCHER;
+
+  // Verify if current path is allowed for this role
+  const isAllowed = allowedPaths.some(path => location.pathname.startsWith(path));
+
+  if (!isAllowed) {
+    // If not allowed, redirect to main operational dashboard
+    return <Navigate to="/dashboard" replace />;
   }
 
   return children;
