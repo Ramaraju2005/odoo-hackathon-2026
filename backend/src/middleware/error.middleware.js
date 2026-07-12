@@ -5,7 +5,7 @@ module.exports = (err, req, res, next) => {
 
   return ApiResponse.error(
     res,
-    err.message || "Internal Server Error",
+    err.message || "Internal Server a Error",
     err.statusCode || 500
   );
 };
