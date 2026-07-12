@@ -1,13 +1,46 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  DISPATCHER
+  MANAGER
+}
+
+enum VehicleStatus {
+  AVAILABLE
+  ON_TRIP
+  MAINTENANCE
+  INACTIVE
+}
+
+enum DriverStatus {
+  AVAILABLE
+  ASSIGNED
+  LEAVE
+  INACTIVE
+}
+
+enum TripStatus {
+  DRAFT
+  SCHEDULED
+  STARTED
+  COMPLETED
+  CANCELLED
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      UserRole @default(DISPATCHER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
