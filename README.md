@@ -364,3 +364,58 @@ This project was developed for educational and hackathon purposes.
 Made with ❤️ using React, Node.js & PostgreSQL.
 
 </p>
+---
+
+# 🔐 Demo Credentials
+
+TransitOps comes preloaded with demo users for testing the Role-Based Access Control (RBAC) system.
+
+Each role has different permissions and access to various modules within the application.
+
+| Name | Role | Email | Password |
+|------|------|--------|----------|
+| **Admin User** | `ADMIN` | `admin@transitops.com` | `admin123` |
+| **John Manager** | `FLEET_MANAGER` | `manager@transitops.com` | `user1234` |
+| **Sarah Dispatcher** | `DISPATCHER` | `dispatcher@transitops.com` | `user1234` |
+| **Mike Safety** | `SAFETY_OFFICER` | `safety@transitops.com` | `user1234` |
+| **Emma Analyst** | `FINANCIAL_ANALYST` | `analyst@transitops.com` | `user1234` |
+
+> **Note:** These accounts are automatically created when running the database seed script (`seed.js`).
+
+---
+
+# 👥 Role-Based Access Control (RBAC)
+
+TransitOps implements Role-Based Access Control to ensure that users can only access features relevant to their responsibilities.
+
+| Role | Permissions |
+|------|-------------|
+| **ADMIN** | Full system access including fleet, drivers, trips, maintenance, fuel management, analytics, settings, and user management. |
+| **FLEET_MANAGER** | Manage vehicle registrations, update fleet information, and oversee maintenance records. |
+| **DISPATCHER** | Create and manage trips, assign available drivers and vehicles, and monitor trip statuses. |
+| **SAFETY_OFFICER** | Manage driver profiles, verify licenses, monitor safety records, and review compliance. |
+| **FINANCIAL_ANALYST** | Access fuel logs, operational expenses, reports, analytics, and export financial summaries. |
+
+---
+
+## 🌱 Seed Database
+
+Populate the database with demo data by running:
+
+```bash
+npm run seed
+```
+
+This command creates:
+
+- 👤 Demo Users
+- 🚚 Vehicles
+- 👨‍✈️ Drivers
+- 🗺️ Trips
+- 🔧 Maintenance Records
+- ⛽ Fuel Logs
+- 📊 Expense Records
+
+Once the seed process completes, you can log in using any of the demo credentials above to explore the application with different access levels.
+
+---
