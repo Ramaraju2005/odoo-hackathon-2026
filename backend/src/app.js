@@ -4,6 +4,7 @@ const helmet = require("helmet");
 const morgan = require("morgan");
 
 const routes = require("./routes");
+const errorHandler = require("./middleware/error.middleware");
 
 const app = express();
 
@@ -13,5 +14,8 @@ app.use(morgan("dev"));
 app.use(express.json());
 
 app.use("/api", routes);
+
+// Global Error Handler (always last)
+app.use(errorHandler);
 
 module.exports = app;

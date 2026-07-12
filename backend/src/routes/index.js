@@ -2,12 +2,15 @@ const express = require("express");
 
 const router = express.Router();
 
+const authRoutes = require("../modules/auth");
+
 router.get("/health", (req, res) => {
-  res.status(200).json({
+  res.json({
     success: true,
     message: "TransitOps Backend Running 🚀",
-    timestamp: new Date().toISOString(),
   });
 });
+
+router.use("/auth", authRoutes);
 
 module.exports = router;
