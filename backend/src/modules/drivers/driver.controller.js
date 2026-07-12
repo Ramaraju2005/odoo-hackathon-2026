@@ -2,8 +2,15 @@ const ApiResponse = require("../../shared/utils/ApiResponse");
 const catchAsync = require("../../shared/utils/catchAsync");
 const driverService = require("./driver.service");
 
+// exports.create = catchAsync(async (req, res) => {
+//   const driver = await driverService.create(req.body);
+//   ApiResponse.success(res, driver, "Driver created successfully", 201);
+// });
 exports.create = catchAsync(async (req, res) => {
+  console.log("Request Body:", req.body);
+
   const driver = await driverService.create(req.body);
+
   ApiResponse.success(res, driver, "Driver created successfully", 201);
 });
 

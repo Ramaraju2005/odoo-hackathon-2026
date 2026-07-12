@@ -16,7 +16,19 @@ class DriverService {
     return prisma.driver.create({
       data,
     });
+    
   }
+  async create(data) {
+  console.log("Service Data:", data);
+
+  return prisma.driver.create({
+    data: {
+      ...data,
+      licenseExpiryDate: new Date(data.licenseExpiryDate),
+      safetyScore: Number(data.safetyScore),
+    },
+  });
+}
 
   async getAll(filters = {}) {
     const where = {};
