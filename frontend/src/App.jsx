@@ -8,6 +8,7 @@ export default function App() {
     <div className="min-h-screen flex items-center justify-center bg-red-600">
       <h1 className="text-5xl font-extralight text-black-100">
         Tailwind v4 Working 🚀
+        checking done
       </h1>
     </div>
   );
