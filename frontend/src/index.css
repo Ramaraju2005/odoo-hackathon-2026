@@ -1,1 +1,97 @@
 @import "tailwindcss";
+
+/* Dark Mode Color Override Tokens */
+.dark body, .dark #root {
+  background-color: #0F172A !important;
+  color: #F9FAFB !important;
+}
+
+.dark .bg-\[\#F4F6F5\] {
+  background-color: #0F172A !important;
+}
+
+.dark .bg-white {
+  background-color: #1E293B !important;
+  border-color: #334155 !important;
+}
+
+.dark .text-gray-900, 
+.dark .text-gray-800, 
+.dark .text-gray-700,
+.dark .text-gray-950,
+.dark .text-gray-800 {
+  color: #F9FAFB !important;
+}
+
+.dark .text-gray-500, 
+.dark .text-gray-400,
+.dark .text-gray-450 {
+  color: #9CA3AF !important;
+}
+
+.dark .border-gray-100, 
+.dark .border-gray-50,
+.dark .divide-gray-50 > *,
+.dark .border-gray-250\/70,
+.dark .border-gray-150 {
+  border-color: #334155 !important;
+}
+
+.dark .bg-gray-50,
+.dark .bg-gray-55\/35,
+.dark .bg-\[\#F4F6F5\] {
+  background-color: #1E293B !important;
+}
+
+.dark input, 
+.dark select,
+.dark textarea {
+  background-color: #1E293B !important;
+  color: #F9FAFB !important;
+  border-color: #334155 !important;
+}
+
+.dark input::placeholder {
+  color: #64748B !important;
+}
+
+.dark .shadow-xs,
+.dark .shadow-2xs,
+.dark .shadow-xl {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3) !important;
+}
+
+.dark .hover\:bg-gray-50\/50:hover {
+  background-color: #334155/30 !important;
+}
+
+.dark .bg-gray-50\/50 {
+  background-color: #1E293B/50 !important;
+  border-color: #334155 !important;
+}
+
+/* Print CSS for PDF Report Exporting */
+@media print {
+  aside, 
+  nav, 
+  button, 
+  select, 
+  .no-print,
+  .no-print * {
+    display: none !important;
+  }
+  
+  main, 
+  .print-content {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+    color: black !important;
+    width: 100% !important;
+  }
+  
+  .bg-white {
+    box-shadow: none !important;
+    border: 1px solid #E2E8F0 !important;
+  }
+}

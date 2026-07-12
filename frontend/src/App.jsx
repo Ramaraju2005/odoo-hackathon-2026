@@ -9,6 +9,7 @@ import { TripsPage } from "./pages/TripsPage";
 import { MaintenancePage } from "./pages/MaintenancePage";
 import { FuelExpensesPage } from "./pages/FuelExpensesPage";
 import { ReportsPage } from "./pages/ReportsPage";
+import { SettingsPage } from "./pages/SettingsPage";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { Navbar } from "./components/Navbar";
 import { Sidebar } from "./components/Sidebar";
@@ -16,11 +17,11 @@ import "./App.css";
 
 const MainLayout = ({ children }) => {
   return (
-    <div className="flex flex-col h-screen">
-      <Navbar />
-      <div className="flex flex-1 overflow-hidden">
-        <Sidebar />
-        <main className="flex-1 overflow-auto bg-gray-50">
+    <div className="flex h-screen overflow-hidden">
+      <Sidebar />
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <Navbar />
+        <main className="flex-1 overflow-auto bg-[#F4F6F5]">
           {children}
         </main>
       </div>
@@ -108,6 +109,17 @@ function AppContent() {
             <ProtectedRoute>
               <MainLayout>
                 <ReportsPage />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/settings"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <SettingsPage />
               </MainLayout>
             </ProtectedRoute>
           }
