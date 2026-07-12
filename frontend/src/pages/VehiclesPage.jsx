@@ -19,7 +19,7 @@ export const VehiclesPage = () => {
   const [sortDir, setSortDir] = useState("asc");
 
   // View-Only logic based on RBAC rules
-  const isReadOnly = user?.role === "DISPATCHER" || user?.role === "FINANCIAL_ANALYST";
+  const isReadOnly = (user?.role === "DISPATCHER" || user?.role === "FINANCIAL_ANALYST") && user?.role !== "ADMIN";
 
   // Document Manager simulation state
   const [docVehicleNo, setDocVehicleNo] = useState(null);

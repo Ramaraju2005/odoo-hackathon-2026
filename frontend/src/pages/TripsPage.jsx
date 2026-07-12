@@ -22,7 +22,7 @@ export const TripsPage = () => {
   });
 
   // View-Only check for Safety Officers
-  const isReadOnly = user?.role === "SAFETY_OFFICER";
+  const isReadOnly = user?.role === "SAFETY_OFFICER" && user?.role !== "ADMIN";
 
   // Completion modal state
   const [completingTripId, setCompletingTripId] = useState(null);

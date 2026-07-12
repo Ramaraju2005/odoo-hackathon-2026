@@ -5,7 +5,14 @@ import { API_ENDPOINTS } from "../constants/api";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    try {
+      const savedUser = localStorage.getItem("user");
+      return savedUser ? JSON.parse(savedUser) : null;
+    } catch {
+      return null;
+    }
+  });
   const [token, setToken] = useState(localStorage.getItem("token"));
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -27,6 +34,7 @@ export const AuthProvider = ({ children }) => {
         password,
       });
       setToken(response.token);
+      localStorage.setItem("user", JSON.stringify(response.user));
       setUser(response.user);
       return response;
     } catch (err) {
@@ -48,6 +56,7 @@ export const AuthProvider = ({ children }) => {
         role,
       });
       setToken(response.token);
+      localStorage.setItem("user", JSON.stringify(response.user));
       setUser(response.user);
       return response;
     } catch (err) {
@@ -59,6 +68,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
+    localStorage.removeItem("user");
     setUser(null);
     setToken(null);
   };

@@ -19,8 +19,14 @@ export const ProtectedRoute = ({ children }) => {
     return <Navigate to="/login" replace />;
   }
 
-  // Get active user role (defaulting to DISPATCHER if none specified)
+  // Get active user role
   const role = user?.role || "DISPATCHER";
+
+  // Explicit ADMIN bypass - ADMIN has full access to all pages
+  if (role === "ADMIN") {
+    return children;
+  }
+
   const allowedPaths = ROLE_ACCESS[role] || ROLE_ACCESS.DISPATCHER;
 
   // Verify if current path is allowed for this role

@@ -35,9 +35,13 @@ export const Sidebar = () => {
   const isActive = (path) => location.pathname === path;
   
   const role = user?.role || "DISPATCHER";
-  const allowedPaths = ROLE_ACCESS[role] || ROLE_ACCESS.DISPATCHER;
-
-  const isVisible = (path) => allowedPaths.includes(path);
+  
+  // Explicit ADMIN bypass - ADMIN sees all navigation items
+  const isVisible = (path) => {
+    if (role === "ADMIN") return true;
+    const allowedPaths = ROLE_ACCESS[role] || ROLE_ACCESS.DISPATCHER;
+    return allowedPaths.includes(path);
+  };
 
   // Group visibility calculations
   const showLogistics = isVisible("/dashboard") || isVisible("/vehicles") || isVisible("/drivers") || isVisible("/trips");
