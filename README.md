@@ -336,7 +336,6 @@ npm run dev
 - 🔔 SMS & Email Notifications
 - 📦 Inventory Management
 - 🌍 Multi-Branch Support
-- 👥 Role-Based Access Control
 - ☁ Cloud Deployment
 - 📡 IoT Vehicle Integration
 
